@@ -10,6 +10,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -46,6 +47,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.foundation.layout.offset
 // ...existing imports
 import com.example.livegg1.Utils.cropBitmapToAspectRatio
 import com.example.livegg1.Utils.takePhoto
@@ -241,6 +250,8 @@ private fun CameraScreenContent(
     captionToShow: String,
     progress: Float,
     timeRemainingSec: Float,
+    rectOffsetX: Dp = 4.dp,
+    rectOffsetY: Dp = 10.dp,
     previewView: @Composable () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -304,7 +315,47 @@ private fun CameraScreenContent(
 //                    color = Color.White,
 //                    modifier = Modifier.padding(bottom = 6.dp)
 //                )
-                // 进度条从左向右显示（直接使用 progress）
+                // 在进度条下方绘制一个不透明的墨绿色圆角条，作为描边背景
+                val borderExtra = 8.dp
+                val borderHeight = 14.dp
+                val borderWidth = progressWidth + borderExtra
+
+                // 使用 Canvas 绘制：先画外部实心圆角矩形，然后抠出中间的透明区域
+                val outerRadius = 8.dp
+                val innerRadius = 6.dp
+                val innerPadding = 4.dp
+
+                val density = LocalDensity.current
+                Canvas(modifier = Modifier
+                    .width(borderWidth)
+                    .height(borderHeight)
+                    .offset(x = rectOffsetX, y = rectOffsetY)
+                ) {
+                    val w = size.width
+                    val h = size.height
+
+                    // 外矩形（实心）
+                    drawRoundRect(
+                        color = Color(0xFF083E2C),
+                        size = Size(w, h),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(outerRadius.toPx(), outerRadius.toPx())
+                    )
+
+                    // 中间抠空矩形：使用 BlendMode.Clear 清除中间区域，产生透明孔
+                    val innerLeft = innerPadding.toPx()
+                    val innerTop = innerPadding.toPx()
+                    val innerW = w - innerPadding.toPx() * 2
+                    val innerH = h - innerPadding.toPx() * 2
+                    drawRoundRect(
+                        color = Color.Transparent,
+                        topLeft = Offset(innerLeft, innerTop),
+                        size = Size(innerW, innerH),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(innerRadius.toPx(), innerRadius.toPx()),
+                        blendMode = BlendMode.Clear
+                    )
+                }
+
+                // 进度条位于上层，宽度小一些以露出背景作为描边
                 LinearProgressIndicator(
                     progress = progress,
                     modifier = Modifier
