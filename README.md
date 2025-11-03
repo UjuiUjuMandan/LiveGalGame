@@ -12,6 +12,11 @@ APP在[tag](https://github.com/JStone2934/LiveGalGame/tags)中可以直接下载
 
 <img width="2533" height="1427" alt="image" src="https://github.com/user-attachments/assets/65dd6c6f-bf47-4bc0-9695-034c7faa290d" />
 
+## 下载
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="75">](https://f-droid.org/packages/com.example.livegg1)
 
 现在的软件在[tag](https://github.com/JStone2934/LiveGalGame/tags)下，功能更完整的版本会后续发布
 
