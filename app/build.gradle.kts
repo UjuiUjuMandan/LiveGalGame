@@ -21,7 +21,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // --- 第 2 处修改：在这里添加 signingConfigs 整个代码块 ---
+    // 在这里添加 signingConfigs 整个代码块 
     signingConfigs {
         val keystorePropsFile = rootProject.file("signing.properties")
         if (keystorePropsFile.exists()) {
@@ -44,8 +44,15 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // --- 第 3 处修改：在这里添加这一行 ---
-            signingConfig = signingConfigs.getByName("release")
+
+            // 检查 "release" 签名配置是否真的被创建了
+            // （只在 "发布" 工作流中才会创建）
+            if (signingConfigs.findByName("release") != null) {
+                // 如果存在，才去使用它
+                signingConfig = signingConfigs.getByName("release")
+            }
+            // 如果不存在（在 "检查" 工作流中），
+            // 这个 if 语句会跳过，构建将继续（生成一个未签名的 release 包）
         }
     }
     compileOptions {

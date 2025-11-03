@@ -15,3 +15,5 @@ local.properties
 
 # Signing properties
 signing.properties
+/release.keystore
+/release
